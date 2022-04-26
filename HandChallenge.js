@@ -18,49 +18,48 @@ const OutputHandChallenge = (values) => {
   let memory = new Array();
   let position = 0;
   let i = 0; //index
-  let current_memory = 0;
   let text = "";
-  memory.push(MIN_MEMORY); //init memory
+  const FistActions = {
+    "👉": () => {
+      position++;
+      if (position === memory.length) {
+        memory.push(MIN_MEMORY);
+      }
+    },
+    "👈": () => {
+      position = Math.max(0, position - 1);
+    },
+    "👆": () => {
+      memory[position] =
+        memory[position] === MAX_MEMORY ? MIN_MEMORY : memory[position] + 1;
+    },
+    "👇": () => {
+      memory[position] =
+        memory[position] === MIN_MEMORY ? MAX_MEMORY : memory[position] - 1;
+    },
+    "🤜": () => {
+      if (memory[position] === 0) {
+        i = RightFistOperation(i, instructions);
+      }
+    },
+    "🤛": () => {
+      if (memory[position] !== 0) {
+        i = LeftFistOperation(i, instructions);
+      }
+    },
+    "👊": () => {
+      text += String.fromCharCode(memory[position]);
+    },
+  };
 
+  memory.push(MIN_MEMORY); //init memory
   while (i < instructions.length) {
-    current_memory = memory[position];
-    switch (instructions[i]) {
-      case "👉":
-        position++;
-        if (position === memory.length) {
-          memory.push(MIN_MEMORY);
-        }
-        break;
-      case "👈":
-        position = Math.max(0, position - 1);
-        break;
-      case "👆":
-        memory[position] =
-          current_memory === MAX_MEMORY ? MIN_MEMORY : current_memory + 1;
-        break;
-      case "👇":
-        memory[position] =
-          current_memory === MIN_MEMORY ? MAX_MEMORY : current_memory - 1;
-        break;
-      case "🤜":
-        if (memory[position] === 0) {
-          i = RightFistOperation(i, instructions);
-        }
-        break;
-      case "🤛":
-        if (memory[position] !== 0) {
-          i = LeftFistOperation(i, instructions);
-        }
-        break;
-      case "👊":
-        text += String.fromCharCode(memory[position]);
-        break;
-    }
+    FistActions[instructions[i]]();
     i++;
   }
   return text;
 };
- 
+
 const LeftFistOperation = (index, instructions) => {
   let subIndex = index - 1;
   let loop = 1;
